@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projekti im shkollor</title>
+</head>
+<body style="font-family:Arial;text-align:center;padding:30px">
+  <h2>Projekti im shkollor</h2>
+  <p>Kjo faqe demonstron përdorimin e vendndodhjes me lejen tënde.</p>
+  <button id="lejo">Ndaj vendndodhjen time</button>
+  <p id="rezultati"></p>
+
+  <script>
+    document.getElementById("lejo").onclick = () => {
+      const r = document.getElementById("rezultati");
+
+      if (!navigator.geolocation) {
+        r.textContent = "Shfletuesi nuk e mbështet vendndodhjen.";
+        return;
+      }
+
+      r.textContent = "Po kërkohet leja...";
+      navigator.geolocation.getCurrentPosition(
+        p => {
+          r.textContent =
+            "Leja u dha! Gjerësia: " +
+            p.coords.latitude +
+            ", Gjatësia: " +
+            p.coords.longitude;
+        },
+        () => {
+          r.textContent = "Vendndodhja nuk u mor. Kontrollo lejen.";
+        }
+      );
+    };
+  </script>
+</body>
+</html>
