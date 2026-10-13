@@ -3,37 +3,90 @@
 <html lang="sq">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Projekti im shkollor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      padding: 30px 18px;
+      text-align: center;
+      color: #1e293b;
+    }
+    main {
+      max-width: 450px;
+      margin: 40px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 16px;
+    }
+    button {
+      padding: 14px;
+      margin: 8px 0;
+      width: 100%;
+      border: 0;
+      border-radius: 9px;
+      background: #16324f;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #rezultati { overflow-wrap: anywhere; line-height: 1.6; }
+  </style>
 </head>
-<body style="font-family:Arial;text-align:center;padding:30px">
-  <h2>Projekti im shkollor</h2>
-  <p>Kjo faqe demonstron përdorimin e vendndodhjes me lejen tënde.</p>
-  <button id="lejo">Ndaj vendndodhjen time</button>
-  <p id="rezultati"></p>
+<body>
+  <main>
+    <h2>Projekti im shkollor 📍</h2>
+    <p>Kjo faqe demonstron përdorimin e vendndodhjes me lejen tënde.</p>
+    <p>Vendndodhja nuk dërgohet automatikisht askund. Ti vendos nëse dëshiron ta ndash.</p>
+
+    <button id="lejo">Merr vendndodhjen time</button>
+    <p id="rezultati">Vendndodhja nuk është kërkuar ende.</p>
+    <button id="ndaj" hidden>Ndaje vendndodhjen</button>
+  </main>
 
   <script>
-    document.getElementById("lejo").onclick = () => {
-      const r = document.getElementById("rezultati");
+    let tekstiVendndodhjes = "";
+    const rezultati = document.getElementById("rezultati");
+    const butoniNdaj = document.getElementById("ndaj");
 
+    document.getElementById("lejo").onclick = () => {
       if (!navigator.geolocation) {
-        r.textContent = "Shfletuesi nuk e mbështet vendndodhjen.";
+        rezultati.textContent = "Shfletuesi nuk e mbështet vendndodhjen.";
         return;
       }
 
-      r.textContent = "Po kërkohet leja...";
+      rezultati.textContent = "Po kërkohet leja...";
       navigator.geolocation.getCurrentPosition(
-        p => {
-          r.textContent =
-            "Leja u dha! Gjerësia: " +
-            p.coords.latitude +
-            ", Gjatësia: " +
-            p.coords.longitude;
+        (p) => {
+          const lat = p.coords.latitude;
+          const lon = p.coords.longitude;
+          tekstiVendndodhjes =
+            "Vendndodhja ime: " + lat + ", " + lon +
+            "\nHarta: https://maps.google.com/?q=" + lat + "," + lon;
+
+          rezultati.textContent =
+            "Vendndodhja u mor me lejen tënde: " + lat + ", " + lon;
+          butoniNdaj.hidden = false;
         },
         () => {
-          r.textContent = "Vendndodhja nuk u mor. Kontrollo lejen.";
+          rezultati.textContent =
+            "Nuk u mor vendndodhja. Kontrollo lejen në shfletues.";
         }
       );
+    };
+
+    butoniNdaj.onclick = async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Vendndodhja ime",
+            text: tekstiVendndodhjes
+          });
+        } catch (e) {}
+      } else {
+        rezultati.textContent = tekstiVendndodhjes;
+      }
     };
   </script>
 </body>
